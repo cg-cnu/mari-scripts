@@ -2,13 +2,15 @@
 # Screenshot all channels
 # ------------------------------------------------------------------------------
 # Takes screenshot of all the channels for the current object
-# Specify the path setting in view > screenshot settings
+# Specify the path and setting in View > Screenshot Settings
 # *IMP*: Keep incremental -> Enabled 
 #
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
+#
+# Will create a menue item in view > Screenshot All Channels
 #
 # Written by sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
@@ -44,4 +46,4 @@ def screenshotAllChans():
 
     return
 
-mari.menus.addAction(mari.actions.create('Screenshot all channels', 'screenshotAllChans()'), "MainWindow/View")
+mari.menus.addAction(mari.actions.create('Screenshot All Channels', 'screenshotAllChans()'), "MainWindow/View")
