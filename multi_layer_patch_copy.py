@@ -2,9 +2,9 @@
 # Multi Layer-Patch Copy
 # ------------------------------------------------------------------------------
 #
+#  
 # 
-# 
-# Written by sreenivas alapati
+# Written by sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
 import mari
 import os
@@ -14,7 +14,7 @@ import PythonQt
 GUI = PythonQt.QtGui
 
 def getUdimMap(data):
-	
+	''' get the udim mapping from the given data '''	
 	global sourcePatches, targetPatches
 	
 	sourcePatches = []
@@ -51,17 +51,17 @@ def getUdimMap(data):
 					tmp_values.append(int(m) - 1)
 			targetPatches.append(tmp_values)
 
-return
+	return
 
 def getGroupLayers(group):
-	
+	''' get the layrs in the group for the given group layer '''
 	groupStack = group.layerStack()
 	layerList = groupStack.layerList()
 	return layerList 
 
 
 def copyPatches(imgSet):
-	
+	''' copies the patches for the given image sets '''	
 	for patch in sourcePatches:
 		sourceImage = imgSet.image(patch, -1)
 		
@@ -75,7 +75,7 @@ def copyPatches(imgSet):
 
 
 def getAllData():
-	
+	''' get all the necessary data '''	
 	global all
 	
 	curGeo = mari.geo.current()
@@ -111,7 +111,7 @@ def getAllData():
 
 
 def copyStacks(layers):
-	
+	''' copies the image sets'''	
 	for layer in layers:
 		
 		if layer.isPaintableLayer():
@@ -144,7 +144,7 @@ def copyStacks(layers):
 	return
 
 def updateUdimMap(data):
-	
+	''' update the udim mapping to the file in logs '''	
 	user = os.popen('whoami').read().split()[0]
 	path = '/home/' + user + '/Mari/Logs/UDIMmappings.txt'
 	objectName = str(curGeo.name())
@@ -176,7 +176,7 @@ def updateUdimMap(data):
 	return
 
 def recoverUdimMap():
-	
+	''' recovers the udim mapping if any '''
 	user = os.popen('whoami').read().split()[0]
 	path = '/home/' + user + '/Mari/Logs/UDIMmappings.txt'
 	curGeo = mari.geo.current()
@@ -200,7 +200,7 @@ def recoverUdimMap():
 	return
 
 def multiLayerPatchCopy():
-	
+	''' copies the imgsets for the patches in the udim mapping '''	
 	data = field.toPlainText()
 	if data == "":
 		mari.utils.message('erere')
@@ -220,7 +220,6 @@ def multiLayerPatchCopy():
 	return
 
 #--------------------------- ui ----------------------------
-
 layerPatchdialog = GUI.QDialog()
 layerPatchdialog.setWindowTitle("Multi Layer-Patch Copy")
 
@@ -231,28 +230,28 @@ layerPatchdialog.setGeometry(800,200,400,280)
 
 recoverUdimMapButton = GUI.QPushButton ('Recover UDIM Mapping')
 recoverUdimMapButton.connect ('clicked()', lambda: recoverUdimMap())
-recoverUdimMapButton.setTool
+recoverUdimMapButton.setToolTip('Recover the previous udim mapping')
 vLayout.addWidget(recoverUdimMapButton)
 
-vLayout.addWidget(GUI.QLable('UDIM Mapping'))
+vLayout.addWidget(GUI.QLabel('UDIM Mapping'))
 
 field = GUI.QTextEdit()
 vLayout.addWidget(field)
 
 channelCheck = GUI.QCheckBox('all Layers')
-vLayout.addWidget(ChannelCheck)
-channelCheck.setToolTip('dfdfd')
+vLayout.addWidget(channelCheck)
+channelCheck.setToolTip('copy for all the layers in the current channel')
 
 copyButton = GUI.QPushButton('Copy')
 copyButton.connect('clicked()', lambda: multiLayerPatchCopy())
-copyButton.setToolTip('sdfdf')
+copyButton.setToolTip('copy the patches in the udim map')
 vLayout.addWidget(copyButton)
 
 ### show the ui
 def showLayerPatchUi():
-	'''  fdf '''
-    if mari.projects.current() is none:
-    	mari.utils.message('no proj')
+	'''display the ui'''
+    if mari.projects.current() is None:
+    	mari.utils.message('no project currently open')
 		return
 	layerPatchDialog.show()
 	
