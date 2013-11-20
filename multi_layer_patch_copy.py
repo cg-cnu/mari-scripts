@@ -1,78 +1,111 @@
 # ------------------------------------------------------------------------------
 # Multi Layer-Patch Copy
 # ------------------------------------------------------------------------------
+# Define Udim mapping 
+# Specify which patch is copied to which patch with udim mapping
 #
-#  
+# eg: source patch : target patch / source patch : target patch
+#
+# eg: 1:2 / 3 : 4 (read - Udim 1001 is copied to Udim 1002 and
+#					Udim 1003 is copied to udim 1004) 
+#
+# eg: 1:4-8 / 10:15,21 (read - Udim 1001 copied to udim 1004,1005...1008 and
+#						Udim 1010 is copied to Udim 1015 and 1021)
+#
+# The script works recursively and takes care of...
+#	all the selected paintable layers.
+#	all the layers inside the selected groups.
+# 	all adjustment and other type of layers in the adjustment stacks.
+# 	all the masks and mask staks on the all types of layers. 
+#
+# The udim mapping entered will be saved to a txt file in the log folder.
+# You can recover it using 'recover Udim Mapping' button.
 # 
-# Written by sreenivas alapati (cg-cnu)
+# copy the script to the same location as your log folder in 
+# windows: C:\Users\[user_name]\Documents\Mari\Scripts
+# linux: /home/[user_name]/Mari/Scripts
+# Mac: /home/[Username]/Mari/Scripts
+#
+# Creates a menue item in Patches > Multi Layer-Patch Copy
+# 
+# @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
+
 import mari
 import os
 import PythonQt
-
 
 GUI = PythonQt.QtGui
 
 def getUdimMap(data):
 	''' get the udim mapping from the given data '''	
 	global sourcePatches, targetPatches
-	
+
 	sourcePatches = []
 	targetPatches = []
 	
-	data0 = data.replace("\n", "")
-	data1 = data0.replace(' ', '')
-	data2 = data1.split('/')
+	data = data.replace("\n", "")
+	data = data.replace(' ', '')
+	data2 = data.split('/')
 	
 	for i in data2:
 		data3 = i.split(':')
 		sourcePatches.append(int (data3[0]) - 1)
-		if "," in data3[1]:
-			tmp_values = []
-			data4 = data3[1].split(",")
-			for j in data4:
-				if "-" not in j:
-					tmp_values.append(int(j) - 1)
-				else:
-					k = j.split('-')
-					l = range(int (k[0]), int(k[1]) + 1)
-					for m in l:
-						tmp_values.append(int(m) - 1)
-			targetPatches.append(tmp_values)
-		else:
-			data4 = data3[1]
-			tmp_values = []
-			if '-' not in data4:
-				tmp_values.append(int(data4)  - 1)
+
+		# if "," in data3[1]:
+
+		tmp_values = []
+		data4 = data3[1].split(",")
+
+		for j in data4:
+			if "-" not in j:
+				tmp_values.append(int(j) - 1)
 			else:
-				k = data4.split('-')
-				l = range(int(k[0]), int(k[1]) + 1)
+				k = j.split('-')
+				l = range(int (k[0]), int(k[1]) + 1)
+
 				for m in l:
 					tmp_values.append(int(m) - 1)
-			targetPatches.append(tmp_values)
+		targetPatches.append(tmp_values)
+
+		# else:
+		# 	data4 = data3[1]
+		# 	tmp_values = []
+
+		# 	if '-' not in data4:
+		# 		tmp_values.append(int(data4)  - 1)
+		# 	else:
+		# 		k = data4.split('-')
+		# 		l = range(int(k[0]), int(k[1]) + 1)
+
+		# 		for m in l:
+		# 			tmp_values.append(int(m) - 1)
+		# 	targetPatches.append(tmp_values)
 
 	return
 
 def getGroupLayers(group):
 	''' get the layrs in the group for the given group layer '''
+
 	groupStack = group.layerStack()
 	layerList = groupStack.layerList()
-	return layerList 
 
+	return layerList 
 
 def copyPatches(imgSet):
 	''' copies the patches for the given image sets '''	
+
 	for patch in sourcePatches:
 		sourceImage = imgSet.image(patch, -1)
 		
 		ind = sourcePatches.index(patch)
 		target_patches = targetPatches[index]
+
 		for each in target_patches:
 			targetImg = imgSet.image(each, -1)
 			targetImg = copyFrom(sourceImg)
 
 	return
-
 
 def getAllData():
 	''' get all the necessary data '''	
@@ -80,50 +113,50 @@ def getAllData():
 	
 	curGeo = mari.geo.current()
 	curChan = curGeo.currentChannel()
+
 	patches = list (curGeo.patchList() )
 	selPatches = [patch for patch in patches if patch.isSelected() ]
-	allLayers = list (curChan.layerList())
 	
+	allLayers = list (curChan.layerList())
 	grpLayers = [layer for layer in allLayers if layer.isGroupLayer()]
 
 	if len(grpLayers) != 0:
 		for group in grpLayers:
 			layers_in_grp = list (getGroupLayers(group))
+
 			for each in layers_in_grp:
 				allLayers.append(each)
-			
-			grpLayers += [ layer for layer in layers_in_grp if layer.isGroupLayer() == True]	
-			
-	layers = [layer for layer in allLayers if not layer.isGroupLayer() ]		
-	selGroups = [layer for layer in allLayers if layer.isGroupLayer() and layer.isSelected() ]		
+			grpLayers += [ layer for layer in layers_in_grp if layer.isGroupLayer() ]
+
+	layers = [layer for layer in allLayers if not layer.isGroupLayer() ]
 	selLayers = [layer for layer in allLayers if not layer.isSelected() ]		
 
-	for group in selGroups:
-		layers_in_grp = list (getGroupLayers(group))
+	selGroups = [layer for layer in allLayers if layer.isGroupLayer() and layer.isSelected() ]		
 	
+	for group in selGroups:
+		layers_in_grp = list (getGroupLayers(group))	
+
 		for each in layers_in_grp:
 			if each.isGroupLayer():
 				selGroups.append(each)
 			else:
 				selLayers.append(each)
-				
-	return
 
+	return
 
 def copyStacks(layers):
 	''' copies the image sets'''	
+
 	for layer in layers:
-		
 		if layer.isPaintableLayer():
 			imgSet = layer.imageSet()
 			copyPatches(imgSet)
-			
+
 		if layer.hasMask() and not layer.hasMaskStack():
 			imgSet = layer.maskImageSet()
-			copyPatches(imgSet)
-			
+			copyPatches(imgSet)			
+
 		try:
-			
 			if layer.hasMaskStack():
 				mask_stack = layer.maskStack()
 				mask_stack_elements = list (mask_stack.layerList())
@@ -131,7 +164,7 @@ def copyStacks(layers):
 					layers.append(layer)
 		except AttributeError:
 			pass
-		
+
 		try:
 			if layer.hasAdjustmentStack():
 				adjust_stack = layer.adjustmentStack()
@@ -139,53 +172,59 @@ def copyStacks(layers):
 				for layer in mask_stack_elements:
 					layers.append(layer)
 		except AttributeError:
-			pass
-					
+			pass					
+
 	return
 
 def updateUdimMap(data):
 	''' update the udim mapping to the file in logs '''	
+
 	user = os.popen('whoami').read().split()[0]
 	path = '/home/' + user + '/Mari/Logs/UDIMmappings.txt'
 	objectName = str(curGeo.name())
 	
 	try:
 		f = open(path, 'r')
-		
 		oldMappings = f.readline()
 		f.close()
-		index = None
-		
+		index = None		
+
 		for line in oldMappings:
 			if line.startswith (objectName):
 				index = oldMappings.index(line)
-		
+
 		if index != None:
 			UdimMapFile = open(path, 'w')
 			oldMappings[index + 1] = str (data) + '\n'
+
 			for i in oldMappings:
 				udimMapFile.write(str(i))
+
 		else:
 			udimMapFile = open(path, 'a')
 			udimMapFile.write('\n' + objectName + '\n' + data)
 
 	except IOError:
 		udimMapFile = open(path, 'W')
-		udimMapFile.write('\n' + objectName + '\n' + data)
-		
+		udimMapFile.write('\n' + objectName + '\n' + data)		
+
 	return
 
 def recoverUdimMap():
 	''' recovers the udim mapping if any '''
+
 	user = os.popen('whoami').read().split()[0]
 	path = '/home/' + user + '/Mari/Logs/UDIMmappings.txt'
+
 	curGeo = mari.geo.current()
 	objectName = str(curGeo.name())
+
 	index = None
-	
+
 	try:
 		with open(path, 'r') as f:
 			oldMappings = f.readline()
+
 		for line in oldMappings:
 			if line.startswith(object):
 				index = oldMappings.index(line)
@@ -197,17 +236,21 @@ def recoverUdimMap():
 
 	except IOError:
 		mari.utils.message('no previous mappings')
+
 	return
 
 def multiLayerPatchCopy():
-	''' copies the imgsets for the patches in the udim mapping '''	
+	''' copies the imgsets for the patches in the udim mapping '''
+
 	data = field.toPlainText()
 	if data == "":
 		mari.utils.message('erere')
 		return
+
 	getUdimMap(data)
 	getAllData()
 	updateUdimMap(data)
+
 	mari.history.startMacro("Multi Layer-Patch Copy")
 
 	if channerlCheck.isChecked():
@@ -215,8 +258,8 @@ def multiLayerPatchCopy():
 	else:
 		copyStacks(selLayers)
 
-	mari.history.stopMacro()
-	
+	mari.history.stopMacro()	
+
 	return
 
 #--------------------------- ui ----------------------------
@@ -250,9 +293,11 @@ vLayout.addWidget(copyButton)
 ### show the ui
 def showLayerPatchUi():
 	'''display the ui'''
+
     if mari.projects.current() is None:
     	mari.utils.message('no project currently open')
 		return
+
 	layerPatchDialog.show()
 	
 mari.menus.addAction(mari.actions.create('Multi Layer-Patch copy', 'showLayerPatchUi()'), 'MainWindow/Patches')

@@ -4,8 +4,12 @@
 # 
 # Merge a copy of all selected layers into a new layer	
 # Command+Shift+E / Ctrl+Shift+E in photoshop
-# 
-# Written by sreenivas alapati
+#
+# Creates a menue item in Layers > Merge Duplicate 
+# The default shortcut has been kept to ctrl+shift+E
+# Which can be changed from Edit > shortcuts
+#
+# @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
 
 import mari
@@ -16,6 +20,7 @@ def mergeDuplicateLayers():
 	curLayerName = str (curChan.currentLayer().name())
 	
 	mari.history.startMacro('Merge Duplicate')
+	mari.app.setWaitCursor()
 	
 	copyAction = mari.actions.find('/Mari/Layers/Copy')
 	copyAction.trigger()
@@ -24,12 +29,9 @@ def mergeDuplicateLayers():
 	pasteAction.trigger()
 	
 	curChan.mergeLayers()
-	
-	if str (mari.app.version().string()) = '2.5v1':
-		curLayer = curChan.currentLayer()
-		curLayer.setName(curLayerName + '_mrgDup')
-	
+		
 	mari.history.stopMacro()
+	mari.app.restoreCursor()	
 	
 mergeDuplicateAction = mari.actions.create ('Merge Duplicate'. 'mergeDuplicateLayers()')
 mari.menus.addAction(mergeDuplicateAction, 'MainWindow/Layers')

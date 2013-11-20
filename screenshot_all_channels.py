@@ -12,7 +12,7 @@
 #
 # Will create a menue item in view > Screenshot All Channels
 #
-# Written by sreenivas alapati (cg-cnu)
+# @uthor by sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
 
 import mari

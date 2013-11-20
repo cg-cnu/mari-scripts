@@ -1,8 +1,18 @@
+# ------------------------------------------------------------------------------
 # Channel Tools
+# ------------------------------------------------------------------------------
+# A bunch of tools to easy out some channel task
+#	 
+# 
+# copy the script to the same location as your log folder in 
+# windows: C:\Users\[user_name]\Documents\Mari\Scripts
+# linux: /home/[user_name]/Mari/Scripts
+# Mac: /home/[Username]/Mari/Scripts
 #
-#
-#
-#
+# Creates a menue item in Channels > Channel Tools
+# 
+# @uthor sreenivas alapati (cg-cnu)
+# ------------------------------------------------------------------------------
 
 import mari
 import PythonQt
@@ -31,18 +41,19 @@ def setChannelList():
 	in all the objects except the current one'''
 	
 	channelList = []
-	objs = mari.geo.list()
+	geoms = mari.geo.list()
 	
-	for obj in objs:
-		channels = obj.channelList()
-		objName = str (obj.name())
+	for geom in geoms:
+		channels = geom.channelList()
+		geomName = str (geom.name())
 		
 		for channel in channels:
 			channelName = str (channel.name())
-			channelList.append(objName + '--' + channelName)
+			channelList.append(geomName + '--' + channelName)
 
 	curGeo = mari.geo.current()
 	curGeoName = str ( curGeo.name() )
+	
 	curChan = curGeo.currentChannel()
 	curChanName = str ( curChan.name() )
 	
@@ -57,6 +68,8 @@ def setChannelList():
 	return
 	
 def deleteMultiChannels():
+	''' Delete multiple channels in one go '''
+
 	selectedChannelItems = channel_list.selectedItems()
 	selectedChannelItemsText = [i.text() for i in selectedChannelItems ]
 	
@@ -66,8 +79,7 @@ def deleteMultiChannels():
 	
 	mari.history.startMacro('Delete Multi Channels ')
 	for channel in selectedChannelItemsText:
-		tmp_obj = channel.split('--')[0]
-		tmp_chan = channel.split('--')[1]
+		[ tmp_obj, tmp_chan ] = channel.split('--')
 		
 		obj = mari.geo.get(tmp_obj)
 		chan = obj.channel(tmp_chan)
@@ -91,7 +103,7 @@ def copyLayersToChannels():
 	mari.history.startMacro('Copy Layers To Channels')
 	mari.app.setWaitCursor()
 	
-	if channelCopyCheck.isChecked()"
+	if channelCopyCheck.isChecked():
 		for layer in layers:
 			layer.setSelected(True)
 			
@@ -105,9 +117,7 @@ def copyLayersToChannels():
 		cur_chan.removeLayers()
 	
 	for i in selectedChannelItemsText:
-		tmp - i.split('--')
-		geo = mari.geo.find(tmp[0])
-		chan = geo.findChannel(tmp[1])
+		[ gep, chan ] = i.split('--')
 		
 		try:
 			mari.geo.setCurrent(geo)
@@ -127,6 +137,7 @@ def copyLayersToChannels():
 	return
 		
 def shareToChannel():
+	''' Share current channel to selected channels in the list '''
 
 	curGeo = mari.geo.current()
 	curChan = curGeo.currentChannel()
@@ -139,11 +150,10 @@ def shareToChannel():
 		mai.utils.message( ' select at least one channel to copy ' )
 		return
 	
-	mari.history.startMacro('share channel To Channels')
+	mari.history.startMacro('Share Channel To Channels')
 	
 	for channel in selectedChannelItemsText:
-		tmp_obj = channel.split('--')[0]
-		tmp_chan = channel.split('--')[1]
+		[ tmp_obj, tmp_chan ] = [ channel.split('--') ] 
 		
 		tar_obj = mari.geo.get(tmp_obj)
 		tar_chan = tar_obj.channel(tmp_chan)
