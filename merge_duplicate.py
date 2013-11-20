@@ -20,6 +20,9 @@ def mergeDuplicateLayers():
 	copyAction = mari.actions.find('/Mari/Layers/Copy')
 	copyAction.trigger()
 	
+	pasteAction = mari.actions.find('/Mari/Layers/Paste')
+	pasteAction.trigger()
+	
 	curChan.mergeLayers()
 	
 	if str (mari.app.version().string()) = '2.5v1':
