@@ -1,9 +1,13 @@
 # ------------------------------------------------------------------------------
 # Merge Duplicate
 # ------------------------------------------------------------------------------
-# 
-# Merge a copy of all selected layers into a new layer	
-# Command+Shift+E / Ctrl+Shift+E in photoshop
+# creates a merge duplicate of selected layers.	
+# Same as Command+Shift+E / Ctrl+Shift+E in photoshop
+#
+# copy the script to the same location as your log folder in 
+# windows: C:\Users\[user_name]\Documents\Mari\Scripts
+# linux: /home/[user_name]/Mari/Scripts
+# Mac: /home/[Username]/Mari/Scripts
 #
 # Creates a menue item in Layers > Merge Duplicate 
 # The default shortcut has been kept to ctrl+shift+E
@@ -17,8 +21,7 @@ import mari
 def mergeDuplicateLayers():
 	curGeo = mari.geo.current()
 	curChan = curGeo.currentChannel()
-	curLayerName = str (curChan.currentLayer().name())
-	
+
 	mari.history.startMacro('Merge Duplicate')
 	mari.app.setWaitCursor()
 	
