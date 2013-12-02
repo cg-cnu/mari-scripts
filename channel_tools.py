@@ -2,7 +2,10 @@
 # Channel Tools
 # ------------------------------------------------------------------------------
 # A bunch of tools to easy out some channel task
-#	 
+#
+### TODO ###
+# implement tree structure for channels
+#
 # 
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
