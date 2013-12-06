@@ -20,12 +20,14 @@ import mari
 import os
 
 def patchBake():
+	'''Bake the selected patches to image manager'''
+	
 	curGeo = mari.geo.current()
 	patchList = list (curGeo.patchList() )
     selPatchList = [patch for patch in patchList if patch.isSelected() ]
 
 	if len(selPatchList) == 0:
-		mari.utils.meesage()
+		mari.utils.meesage('Select atleast one patch')
 		return
 
    	mari.history.startMacro('Patch Bake')
@@ -60,9 +62,10 @@ def patchBake():
 		mari.images.load(path)
 		os.remove(path)
 	
-	cur_chan.removeLayers()
-
-	mari.app.restoreCursor()
+	curChan.removeLayers()
+	
 	mari.history.stopMacro()
+	mari.app.restoreCursor()
+
 
 mari.menus.addAction(mari.actions.create('Patch Bake', 'patchBake()'), "MainWindow/Patches")
