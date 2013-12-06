@@ -18,7 +18,11 @@
 
 def visibility():
 
-	curGeo = mari.geo.current()
+	if not mari.projects.current():
+		mari.utils.message('No project currently open')
+		return 
+	
+    curGeo = mari.geo.current()
     curChan = curGeo.currentChannel()
 
     allLayers = list (curChan.layerList())    
@@ -46,10 +50,12 @@ def visibility():
             	selLayers.append(each)
 	
 	mari.history.startMacro('Toggle Layer Visibility')
+	
 	for layer in sel_layers:
 		layer.setVisibility(not layer.isVisible())
 	for group in sel_groups:
 		group.setVisibility(not layer.isVisible())
+	
 	mari.history.stopMacro()
 	
 	return
