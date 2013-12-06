@@ -22,6 +22,10 @@ import os
 def patchBake():
 	'''Bake the selected patches to image manager'''
 	
+	if not mari.projects.current():
+		mari.utils.message('No project currently open')
+		return
+	
 	curGeo = mari.geo.current()
 	patchList = list (curGeo.patchList() )
     selPatchList = [patch for patch in patchList if patch.isSelected() ]
