@@ -28,18 +28,18 @@ def patchBake():
 	
 	curGeo = mari.geo.current()
 	patchList = list (curGeo.patchList() )
-    selPatchList = [patch for patch in patchList if patch.isSelected() ]
-
+	selPatchList = [patch for patch in patchList if patch.isSelected() ]
+	
 	if len(selPatchList) == 0:
 		mari.utils.meesage('Select atleast one patch')
 		return
-
-   	mari.history.startMacro('Patch Bake')
-    mari.app.setWaitCursor()
-
+		
+	mari.history.startMacro('Patch Bake')
+	mari.app.setWaitCursor()
+	
 	user = os.popen('whoami').read().split()[0]
 	path = str ('/home/'+ user + '/Desktop/tmp_bak_tmp.tga' )
-
+	
 	curChan = curGeo.currentChannel()
 	layers = list(curChan.layerList())
 	
