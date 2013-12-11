@@ -31,6 +31,9 @@ def layerData():
 	''' Updates the global Variables of all the layers, selected Layers,
 	unselected layers and groups, selected groups and unselected groups '''
 
+	global layers, selLayers, unSelLayers
+	global groups, selGroups, unSelGroups
+
 	if not mari.projects.current():
 		mari.utils.message('No project currently open')
 		return -1
@@ -52,18 +55,18 @@ def layerData():
 		
 		for unSelGroup in unSelGroups:
 			layersInGroup = list (getLayersInGroup(unSelGroup))
-			
-		for layer in layersInGroup:
-			if layer.isGroupLayer():
-				if layer.isSelected():
-					selGroups.append(layer)
+
+			for layer in layersInGroup:
+				if layer.isGroupLayer():
+					if layer.isSelected():
+						selGroups.append(layer)
+					else:
+						unSelGroups.append(layer)
 				else:
-					unSelGroups.append(layer)
-			else:
-				if layer.isSelected():
-					selLayers.append(layer)
-				else:
-					unSelLayers.append(layer)
+					if layer.isSelected():
+						selLayers.append(layer)
+					else:
+						unSelLayers.append(layer)
 	return
 
 def toggleSelVisibility():
@@ -108,7 +111,7 @@ def toggleSelLock():
 		for layer in selLayers:
 			layer.setLocked(not layer.isLocked())
 		for group in selGroups:
-			group.setLocked(not group.isLOcked())
+			group.setLocked(not group.isLocked())
 		
 		mari.app.restoreCursor()
 		mari.history.stopMacro()
@@ -122,28 +125,29 @@ def toggleUnselLock():
 		mari.history.startMacro('Toggle Unselected Layer Lock')
 		mari.app.setWaitCursor()
 
-
 		for layer in unSelLayers:
 			layer.setLocked(not layer.isLocked())
+
+		for group in unSelGroups:
+			group.setLocked(not group.isLocked())
 
 		mari.app.restoreCursor()
 		mari.history.stopMacro()
 	
 	return
 	
-toggleSelVisibilityAction = mari.asctions.create('Toggle Selected Visibility', 'toggleSelVisibility()')
-mari.menus.addAction(toggleSelVisibilityAction, 'MainWindw/Layers')
+toggleSelVisibilityAction = mari.actions.create('Toggle Selected Visibility', 'toggleSelVisibility()')
+mari.menus.addAction(toggleSelVisibilityAction, 'MainWindow/Layers')
 toggleSelVisibilityAction.setShortcut('Ctrl+Shift+V')
 
-toggleUnselVisibilityAction = mari.asctions.create('Toggle Unselected Visibility', 'toggleUnselVisibility()')
-mari.menus.addAction(toggleUnselVisibilityAction, 'MainWindw/Layers')
+toggleUnselVisibilityAction = mari.actions.create('Toggle Unselected Visibility', 'toggleUnselVisibility()')
+mari.menus.addAction(toggleUnselVisibilityAction, 'MainWindow/Layers')
 toggleSelVisibilityAction.setShortcut('Alt+Shift+V')
 
-toggleSelLockAction = mari.asctions.create('Toggle Selected Lock', 'toggleSelLock()')
-mari.menus.addAction(toggleSelLockAction, 'MainWindw/Layers')
-toggleSelLockAction.setShortcut('Ctrl+Shift+V')
+toggleSelLockAction = mari.actions.create('Toggle Selected Lock', 'toggleSelLock()')
+mari.menus.addAction(toggleSelLockAction, 'MainWindow/Layers')
+toggleSelLockAction.setShortcut('Ctrl+Shift+L')
 
-
-toggleUnselLockAction = mari.asctions.create('Toggle Unselected Lock', 'toggleUnselLock()')
-mari.menus.addAction(toggleUnselLockAction, 'MainWindw/Layers')
+toggleUnselLockAction = mari.actions.create('Toggle Unselected Lock', 'toggleUnselLock()')
+mari.menus.addAction(toggleUnselLockAction, 'MainWindow/Layers')
 toggleSelLockAction.setShortcut('Alt+Shift+L')
