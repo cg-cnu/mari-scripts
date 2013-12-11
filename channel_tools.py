@@ -2,10 +2,11 @@
 # Channel Tools
 # ------------------------------------------------------------------------------
 # A bunch of tools to easy out some channel task
-#
+# 
+# find out the channel_list ???
 ### TODO ###
 # implement tree structure for channels
-#
+# Implement the export thing also... have to pull up the export dialog on export
 # 
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
@@ -23,26 +24,28 @@ import PythonQt
 GUI = PythonQt.QtGui
 USER_ROLE = 32
 
-def merge_duplicate():
+def mergeDuplicate():
 	''' create a merge duplicate of the selected '''
 
 	curGeo = mari.geo.current()
-    curChan = curGeo.currentChannel()
+	curChan = curGeo.currentChannel()
 
-    copyAction = mari.actions.find('/Mari/Layers/Copy')
-    copyAction.trigger()
-    
-    pasteAction = mari.actions.find('/Mari/Layers/Paste')
-    pasteAction.trigger()
+	copyAction = mari.actions.find('/Mari/Layers/Copy')
+	copyAction.trigger()
 	
-    curChan.mergeLayers()
-    
-    return
+	pasteAction = mari.actions.find('/Mari/Layers/Paste')
+	pasteAction.trigger()
+	
+	curChan.mergeLayers()
+	
+	return
 
 def setChannelList():
 	''' Updates the channels in the list - displays all the channels
 	in all the objects except the current one'''
 	
+	global channelList
+
 	channelList = []
 	geoms = mari.geo.list()
 	
@@ -52,7 +55,7 @@ def setChannelList():
 		
 		for channel in channels:
 			channelName = str (channel.name())
-			channelList.append(geomName + '--' + channelName)
+			channelList.append(geomName + '-->' + channelName)
 
 	curGeo = mari.geo.current()
 	curGeoName = str ( curGeo.name() )
@@ -60,8 +63,7 @@ def setChannelList():
 	curChan = curGeo.currentChannel()
 	curChanName = str ( curChan.name() )
 	
-	channelList.remove(curGeoName + '--' + curChanName)
-	
+	channelList.remove(curGeoName + '-->' + curChanName)
 	channelListWidget.clear()
 	
 	for channel in channelList:
@@ -70,10 +72,10 @@ def setChannelList():
 
 	return
 	
-def deleteMultiChannels():
+def deleteMultipleChannels():
 	''' Delete multiple channels in one go '''
 
-	selectedChannelItems = channel_list.selectedItems()
+	selectedChannelItems = channelList.selectedItems()
 	selectedChannelItemsText = [i.text() for i in selectedChannelItems ]
 	
 	if len(selectedChannelItemsText) == 0:
@@ -82,21 +84,25 @@ def deleteMultiChannels():
 	
 	mari.history.startMacro('Delete Multi Channels ')
 	for channel in selectedChannelItemsText:
-		[ tmp_obj, tmp_chan ] = channel.split('--')
+		[ tmpObj, tmpChan ] = channel.split('-->')
 		
-		obj = mari.geo.get(tmp_obj)
-		chan = obj.channel(tmp_chan)
+		obj = mari.geo.get(tmpObj)
+		chan = obj.channel(tmpChan)
 		obj.removeChannel(chan)
 		setChannelList()
-	mari.history
-	retun 
+
+	mari.history.stopMacro()
+
+	return
 	
 def copyLayersToChannels():
+	''' copy layers from current channel to other channels'''
+
 	curGeo = mari.geo.current
 	curChan = curGeo.currentChannel()
-	allLayers = list ( curChan.layerList() )
+	layerList = list ( curChan.layerList() )
 	
-	selectedChannelItems = channel_list.selectedItems()
+	selectedChannelItems = channelList.selectedItems()
 	selectedChannelItemsText = [i.text() for i in selectedChannelItems ]
 	
 	if len(selectedChannelItemsText) == 0:
@@ -107,11 +113,11 @@ def copyLayersToChannels():
 	mari.app.setWaitCursor()
 	
 	if channelCopyCheck.isChecked():
-		for layer in layers:
+		for layer in layerList:
 			layer.setSelected(True)
-			
+
 	if mergeCheck.isChecked():
-		merge_duplicate()
+		mergeDuplicate()
 		
 	copyAction = mari.actions.find('/Mari/Layers/Copy')
 	copyAction.trigger()
@@ -120,11 +126,11 @@ def copyLayersToChannels():
 		cur_chan.removeLayers()
 	
 	for i in selectedChannelItemsText:
-		[ gep, chan ] = i.split('--')
+		[ geo, chan ] = i.split('-->')
 		
 		try:
 			mari.geo.setCurrent(geo)
-			chan.makeCurrent()
+			chan.makeCurrent(chan)
 			pasteAction = mari.actions.find('/Mari/Layers/Paste')
 			pasteAction.trigger()
 			
@@ -133,9 +139,9 @@ def copyLayersToChannels():
 		
 	mari.geo.setCurrent(curGeo)
 	curGeo.setcurrent(curChan)
-	
+
+	mari.app.restoreCursor()	
 	mari.history.stopMacro()
-	mari.app.restoreCursor()
 	
 	return
 		
@@ -146,7 +152,7 @@ def shareToChannel():
 	curChan = curGeo.currentChannel()
 	curChanName = str (curChan.name())
 	
-	selectedChannelItems = channel_list.selectedItems()
+	selectedChannelItems = channelList.selectedItems()
 	selectedChannelItemsText = [i.text() for i in selectedChannelItems ]
 	
 	if len(selectedChannelItemsText) == 0:
@@ -156,11 +162,11 @@ def shareToChannel():
 	mari.history.startMacro('Share Channel To Channels')
 	
 	for channel in selectedChannelItemsText:
-		[ tmp_obj, tmp_chan ] = [ channel.split('--') ] 
+		[ tmpObj, tmpChan ] = [ channel.split('-->') ] 
 		
-		tar_obj = mari.geo.get(tmp_obj)
-		tar_chan = tar_obj.channel(tmp_chan)
-		tar_chan.createChannelLayer(cur_chan_name, cur_chan)
+		tarObj = mari.geo.get(tmpObj)
+		tarChan = tarObj.channel(tmpChan)
+		tarChan.createChannelLayer(cur_chan_name, cur_chan)
 
 	mari.history.stopMacro()
 	
@@ -171,21 +177,21 @@ channelDialog.setWindowTitle('Channel Tools')
 
 vChannelLayout = GUI.QVBoxLayout()
 
-channelDialog.setLayout()
-channelDialog.setGeometry()
+channelDialog.setLayout(vChannelLayout)
+channelDialog.setGeometry(800,200,400,800)
 
-updatechanButton = GUI.QPushBUtton()
+updatechanButton = GUI.QPushButton('Update Channels')
 updatechanButton.connect('clicked()', lambda: setChannelList())
-updatechanButton.setToolTip()
+updatechanButton.setToolTip('Update the channel list')
 vChannelLayout.addWidget(updatechanButton)
 
 channelListWidget = GUI.QListWidget()
-channelListWidget.setSelectionMode(channel_list.ExtendedSelection)
+channelListWidget.setSelectionMode(channelListWidget.ExtendedSelection)
 vChannelLayout.addWidget(channelListWidget)
 
 deleteChannels = GUI.QPushButton('Delete')
 deleteChannels.connect('clicked()', lambda: deleteMultipleChannels())
-deleteChannels.setToolTip(' flkjf ')
+deleteChannels.setToolTip(' Delete the selected channels ')
 vChannelLayout.addWidget(deleteChannels)
 
 channelCopyCheck = GUI.QCheckBox('all layers')
@@ -198,13 +204,15 @@ vChannelLayout.addWidget(mergeCheck)
 
 copyToChannelButton = GUI.QPushButton('Copy')
 copyToChannelButton.connect('clicked()', lambda: copyLayersToChannels())
-copyToChannelButton.setToolTip('copy the selected layer to the selected channels')
+copyToChannelButton.setToolTip('copy the layers to the selected channels')
 vChannelLayout.addWidget(copyToChannelButton)
 
 shareToChannelButton = GUI.QPushButton('share')
 shareToChannelButton.connect('clicked()', lambda: shareToChannels())
-shareToChannelButton.setToolTip('share the selected channel to the target channels ')
+shareToChannelButton.setToolTip('share the current channel to the target channels ')
 vChannelLayout.addWidget(shareToChannelButton)
+
+setChannelList()
 	
 def channelToolsUi():
 	''' Show ui '''
@@ -214,4 +222,3 @@ def channelToolsUi():
 	channelDialog.show()
 
 mari.menus.addAction(mari.actions.create('Channel Tools', 'channelToolsUi()'), "MainWindow/Channels")
-	
