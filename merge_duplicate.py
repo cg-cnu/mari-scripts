@@ -30,8 +30,7 @@ def mergeDuplicateLayers():
 	
 	curGeo = mari.geo.current()
 	curChan = curGeo.currentChannel()
-	curLayer = curChan.currentLayer()
-	curActiveLayerName = str(curLayer.name())
+	curActiveLayerName = str(curChan.currentLayer().name())
 	
 	patches = list(curGeo.patchList())
 	unSelPatches = [ patch for patch in patches if not patch.isSelected() ]
@@ -56,7 +55,7 @@ def mergeDuplicateLayers():
 		for patch in unSelPatches:
 			uv = patch.uvIndex()
 			patchImg = imgSet.image(uv, -1)
-			patchImg.fill(mari.color(1,0,0,0))
+			patchImg.fill(mari.Color(1,0,0,0))
 			
 	if mari.app.version().number() >= 20501300:
 		
