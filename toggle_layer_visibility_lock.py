@@ -1,19 +1,18 @@
 # ------------------------------------------------------------------------------
-# Toggle layer visibility
+# Toggle layer visibility and lock
 # ------------------------------------------------------------------------------
-# Toggles the visibility of selected layers 
-# Toggles the visibility of Unselected layers
-# Toggles the lock status of selected layers
-# Toggles the lock status of unselected layers
+# ctrl + shift + V - Toggles the visibility of selected layers 
+# alt + shift + V - Toggles the visibility of Unselected layers
+# ctrl + shift + L - Toggles the lock status of selected layers
+# alt + shift + L - Toggles the lock status of unselected layers
 # 
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
 #
-# Creates a menue item in Layers > Toggle Layer Visibility...
-# The default shortcut has been kept to ctrl+shift+V...
-# Which can be changed from Edit > shortcuts
+# Creates a menue items in Layers 
+# The default shortcut can be changed from Edit > shortcuts
 #
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
