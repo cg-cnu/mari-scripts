@@ -41,7 +41,7 @@ def patchBake():
 	path = str ('/home/'+ user + '/Desktop/tmp_bak_tmp.tga' )
 
 	curChan = curGeo.currentChannel()
-	layers = list (curChan.layerList())
+	layers = list(curChan.layerList())
 	
 	for layer in layers:
 		layer.setSelected(True)
@@ -70,6 +70,5 @@ def patchBake():
 	
 	mari.history.stopMacro()
 	mari.app.restoreCursor()
-
 
 mari.menus.addAction(mari.actions.create('Patch Bake', 'patchBake()'), "MainWindow/Patches")
