@@ -5,7 +5,7 @@
 # Same as Command+Shift+E / Ctrl+Shift+E in photoshop
 # Will merge for selected patches other wise will merge all.
 # Will rename the merged layer to the current active layer name + _mrgDup
-# ** rename will work only for mari 2.5 **
+# ** rename will work for mari 2.5 and after **
 #
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
