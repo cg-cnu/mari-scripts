@@ -36,6 +36,6 @@ def mergeDuplicateLayers():
 	mari.history.stopMacro()
 	mari.app.restoreCursor()	
 	
-mergeDuplicateAction = mari.actions.create ('Merge Duplicate'. 'mergeDuplicateLayers()')
+mergeDuplicateAction = mari.actions.create ('Merge Duplicate', 'mergeDuplicateLayers()')
 mari.menus.addAction(mergeDuplicateAction, 'MainWindow/Layers')
 mergeDuplicateAction.setShortcut('Ctrl+Shift+E')
