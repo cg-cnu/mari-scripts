@@ -2,8 +2,8 @@
 # Multi Layer-Patch Copy
 # ------------------------------------------------------------------------------
 # Define Udim mapping 
-# Specify the source patch from which paint data is copied from to the target
-# patch to wich data is copied to.
+# Specify the source patch from which paint data is copied from - to the target
+# patch to wich data is copied.
 #
 # eg: source patch : target patch / source patch : target patch
 #
