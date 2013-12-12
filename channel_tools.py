@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Channel Tools
 # ------------------------------------------------------------------------------
-# A bunch of tools to easy out some channel task
+# A bunch of tools to easy out some channel tasks.
 # 
 # Delete multiple channels in one go.
 #
@@ -99,6 +99,7 @@ def deleteMultipleChannels():
 		setChannelList()
 
 	mari.history.stopMacro()
+	channelDialog.close()
 
 	return
 	
@@ -136,8 +137,10 @@ def copyLayersToChannels():
 		[ geo, chan ] = i.split('-->')
 		
 		try:
-			mari.geo.setCurrent(geo)
-			chan.makeCurrent(chan)
+			geom = mari.geo.find(geo)
+			channel = geom.findChannel(chan)
+			mari.geo.setCurrent(geom)
+			chan.makeCurrent(channel)
 			pasteAction = mari.actions.find('/Mari/Layers/Paste')
 			pasteAction.trigger()
 			
@@ -173,9 +176,10 @@ def shareToChannel():
 		
 		tarObj = mari.geo.get(tmpObj)
 		tarChan = tarObj.channel(tmpChan)
-		tarChan.createChannelLayer(cur_chan_name, cur_chan)
+		tarChan.createChannelLayer(curChanName, curChan)
 
 	mari.history.stopMacro()
+	channelDialog.close()
 	
 	return
 	
@@ -185,7 +189,7 @@ channelDialog.setWindowTitle('Channel Tools')
 vChannelLayout = GUI.QVBoxLayout()
 
 channelDialog.setLayout(vChannelLayout)
-channelDialog.setGeometry(800,200,600,800)
+channelDialog.setGeometry(800,200,480,600)
 
 updatechanButton = GUI.QPushButton('Update Channels')
 updatechanButton.connect('clicked()', lambda: setChannelList())
