@@ -2,8 +2,8 @@
 # Patch Bake
 # ------------------------------------------------------------------------------
 # Bakes the selected patches to images manager
-# Works the sname as extract selected but for the whole channel and on all the
-# selected patches
+# Works the same as patches > extract selected but for the whole channel
+# and on all the selected patches.
 #
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
