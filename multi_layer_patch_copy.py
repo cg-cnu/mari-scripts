@@ -2,7 +2,8 @@
 # Multi Layer-Patch Copy
 # ------------------------------------------------------------------------------
 # Define Udim mapping 
-# Specify which patch is copied to which patch with udim mapping
+# Specify the source patch from which paint data is copied from to the target
+# patch to wich data is copied to.
 #
 # eg: source patch : target patch / source patch : target patch
 #
@@ -38,7 +39,9 @@ import PythonQt
 GUI = PythonQt.QtGui
 
 def getUdimMap(data):
-	''' get the udim mapping from the given data '''	
+	''' Updates the global variables sourcePatches and targetPatches
+	from the udim mapping data user provides  '''	
+
 	global sourcePatches, targetPatches
 
 	sourcePatches = []
@@ -52,12 +55,11 @@ def getUdimMap(data):
 		data3 = i.split(':')
 		sourcePatches.append(int (data3[0]) - 1)
 
-		# if "," in data3[1]:
-
 		tmp_values = []
 		data4 = data3[1].split(",")
 
 		for j in data4:
+
 			if "-" not in j:
 				tmp_values.append(int(j) - 1)
 			else:
@@ -67,25 +69,10 @@ def getUdimMap(data):
 				for m in l:
 					tmp_values.append(int(m) - 1)
 		targetPatches.append(tmp_values)
-
-		# else:
-		# 	data4 = data3[1]
-		# 	tmp_values = []
-
-		# 	if '-' not in data4:
-		# 		tmp_values.append(int(data4)  - 1)
-		# 	else:
-		# 		k = data4.split('-')
-		# 		l = range(int(k[0]), int(k[1]) + 1)
-
-		# 		for m in l:
-		# 			tmp_values.append(int(m) - 1)
-		# 	targetPatches.append(tmp_values)
-
 	return
 
 def getGroupLayers(group):
-	''' get the layrs in the group for the given group layer '''
+	''' Returns the list of layers for the given layer group '''
 
 	groupStack = group.layerStack()
 	layerList = groupStack.layerList()
@@ -93,7 +80,8 @@ def getGroupLayers(group):
 	return layerList 
 
 def copyPatches(imgSet):
-	''' copies the patches for the given image sets '''	
+	''' For the given imageset will copy the data
+	from source patch to target patches '''
 
 	for patch in sourcePatches:
 		sourceImage = imgSet.image(patch, -1)
@@ -108,8 +96,10 @@ def copyPatches(imgSet):
 	return
 
 def getAllData():
-	''' get all the necessary data '''	
-	global all
+	''' get all the necessary layer and patch data '''	
+	global curGeo, curChan, allLayers
+	global layers, grpLayers, selGroups, selLayers
+	global patches, selPatches
 	
 	curGeo = mari.geo.current()
 	curChan = curGeo.currentChannel()
@@ -232,7 +222,7 @@ def recoverUdimMap():
 				field.setPlainText(oldUDIMmap)
 
 		if index == None:
-			mari.utils.message('no prev mappings')
+			mari.utils.message('no previous mappings')
 
 	except IOError:
 		mari.utils.message('no previous mappings')
@@ -244,7 +234,7 @@ def multiLayerPatchCopy():
 
 	data = field.toPlainText()
 	if data == "":
-		mari.utils.message('erere')
+		mari.utils.message('Please enter atleast one mapping in format source: targe')
 		return
 
 	getUdimMap(data)
