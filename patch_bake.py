@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Patch Bake
 # ------------------------------------------------------------------------------
-# Bakes the selected patches to images manager
+# Bakes the selected patches to images manager.
 # Works the same as patches > extract selected but for the whole channel
 # and on all the selected patches.
 #
@@ -10,7 +10,7 @@
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
 #
-# Creates a menue item in Patches > Patch Bake
+# Creates a menu item in Patches > Patch Bake
 # 
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
@@ -32,15 +32,15 @@ def patchBake():
 	if len(selPatchList) == 0:
 		mari.utils.meesage('Select atleast one patch')
 		return
-		
-	mari.history.startMacro('Patch Bake')
-	mari.app.setWaitCursor()
 	
 	user = os.popen('whoami').read().split()[0]
 	path = str ('/home/'+ user + '/Desktop/tmp_bake_tmp.tga' )
 	
 	curChan = curGeo.currentChannel()
 	layers = list(curChan.layerList())
+	
+	mari.history.startMacro('Patch Bake')
+	mari.app.setWaitCursor()
 	
 	for layer in layers:
 		layer.setSelected(True)
