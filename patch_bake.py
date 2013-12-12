@@ -2,9 +2,8 @@
 # Patch Bake
 # ------------------------------------------------------------------------------
 # Bakes the selected patches to images manager
-# Its the same as export current channel flattened 
-# and load the image back to image manager
-# (can be time saving)
+# Works the sname as extract selected but for the whole channel and on all the
+# selected patches
 #
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
@@ -38,7 +37,7 @@ def patchBake():
 	mari.app.setWaitCursor()
 	
 	user = os.popen('whoami').read().split()[0]
-	path = str ('/home/'+ user + '/Desktop/tmp_bak_tmp.tga' )
+	path = str ('/home/'+ user + '/Desktop/tmp_bake_tmp.tga' )
 	
 	curChan = curGeo.currentChannel()
 	layers = list(curChan.layerList())
