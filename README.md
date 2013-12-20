@@ -1,24 +1,29 @@
-mariScripts
-===========
+# Mari Scripts #
 
-A Bunch of tools for mari...
+##Overview##
+A Bunch of tools for mari written in python and Qt.
 
-1. Screenshot all channels: 
-	Creates a snapshot of all the channels for the current object
+##Screenshot all channels:##
 
-2. Merge Duplicate: 
-	Creates a merge duplicate of the current selected layers 
+Creates a snapshot of all the channels for the current object
 
-3. Multi Layer-Patch Copy: 
-	With Udim mapping you can copy multiple source patches to target patches
+##Merge Duplicate:##
 
-4. Patch Bake: 
-	Bake the selected patches to images manager
+Creates a merge duplicate of the current selected layers 
 
-5. Channel Tools:
-	A couple of tools to easy out some channel operations 
-	like deleting, copying and sharing
+##Multi Layer-Patch Copy:##
+
+With Udim mapping you can copy multiple source patches to target patches
+
+##Patch Bake:##
+
+Bake the selected patches to images manager
+
+##Channel Tools:##
+
+A couple of tools to easy out some channel operations like deleting, copying and sharing
 	
-6. Toggle Layer Visibility: 
-	Toggles the visibility of the selected layers
+##Toggle Layer Visibility:##
+
+Toggles the visibility of the selected layers
 	
