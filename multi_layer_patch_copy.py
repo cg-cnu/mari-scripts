@@ -253,13 +253,13 @@ def multiLayerPatchCopy():
 	return
 
 #--------------------------- ui ----------------------------
-layerPatchdialog = GUI.QDialog()
-layerPatchdialog.setWindowTitle("Multi Layer-Patch Copy")
+layerPatchDialog = GUI.QDialog()
+layerPatchDialog.setWindowTitle("Multi Layer-Patch Copy")
 
 vLayout = GUI.QVBoxLayout()
 
-layerPatchdialog.setLayout(vLayout)
-layerPatchdialog.setGeometry(800,200,400,280)
+layerPatchDialog.setLayout(vLayout)
+layerPatchDialog.setGeometry(800,200,400,280)
 
 recoverUdimMapButton = GUI.QPushButton ('Recover UDIM Mapping')
 recoverUdimMapButton.connect ('clicked()', lambda: recoverUdimMap())
