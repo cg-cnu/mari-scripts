@@ -195,7 +195,7 @@ def updateUdimMap(data):
 			udimMapFile.write('\n' + objectName + '\n' + data)
 
 	except IOError:
-		udimMapFile = open(path, 'W')
+		udimMapFile = open(path, 'w')
 		udimMapFile.write('\n' + objectName + '\n' + data)		
 
 	return
@@ -287,7 +287,8 @@ def showLayerPatchUi():
     if mari.projects.current() is None:
     	mari.utils.message('no project currently open')
 		return
-
+	
 	layerPatchDialog.show()
+	return
 	
 mari.menus.addAction(mari.actions.create('Multi Layer-Patch copy', 'showLayerPatchUi()'), 'MainWindow/Patches')
