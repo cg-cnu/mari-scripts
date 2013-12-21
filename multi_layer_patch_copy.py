@@ -27,7 +27,7 @@
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
 #
-# Creates a menue item in Patches > Multi Layer-Patch Copy
+# Creates a menu item in Patches > Multi Layer-Patch Copy
 # 
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
@@ -167,10 +167,15 @@ def copyStacks(layers):
 	return
 
 def updateUdimMap(data):
-	''' update the udim mapping to the file in logs '''	
+	''' update the udim mapping to the file in logs '''
+	
+	if mari.app.version().isWindows():
+		user = os.popen('whoami').read().split('\\')[-1]
+		path = str('c:\\User' + user + '\\Documents\\Mari\\Logs\\UDIMmappings.txt')
+	else:
+		user = os.popen('whoami').read().split()[0]
+		path = str('/home/' + user + '/Mari/Logs/UDIMmappings.txt')
 
-	user = os.popen('whoami').read().split()[0]
-	path = '/home/' + user + '/Mari/Logs/UDIMmappings.txt'
 	objectName = str(curGeo.name())
 	
 	try:
@@ -202,10 +207,14 @@ def updateUdimMap(data):
 
 def recoverUdimMap():
 	''' recovers the udim mapping if any '''
-
-	user = os.popen('whoami').read().split()[0]
-	path = '/home/' + user + '/Mari/Logs/UDIMmappings.txt'
-
+	
+	if mari.app.version().isWindows():
+		user = os.popen('whoami').read().split('\\')[-1]
+		path = str('c:\\User' + user + '\\Documents\\Mari\\Logs\\UDIMmappings.txt')
+	else:
+		user = os.popen('whoami').read().split()[0]
+		path = str('/home/' + user + '/Mari/Logs/UDIMmappings.txt')
+	
 	curGeo = mari.geo.current()
 	objectName = str(curGeo.name())
 
