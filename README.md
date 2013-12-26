@@ -27,3 +27,6 @@ A couple of tools to easy out some channel operations like deleting, copying and
 
 Toggles the visibility of the selected layers
 	
+###Send To Mari:###
+
+Send the selected images in Konqueror/windows explorer to mari.
