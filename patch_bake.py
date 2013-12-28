@@ -22,7 +22,7 @@ def patchBake():
 	'''Bake the selected patches to image manager'''
 	
 	if not mari.projects.current():
-		mari.utils.message('No project currently open')
+		mari.utils.message('No project currently open', title = 'Error')
 		return
 	
 	curGeo = mari.geo.current()
@@ -33,11 +33,15 @@ def patchBake():
 		mari.utils.meesage('Select atleast one patch')
 		return
 	
+	# get the windows path working
+	
 	user = os.popen('whoami').read().split()[0]
-	path = str ('/home/'+ user + '/Desktop/tmp_bake_tmp.tga' )
+	path = str ('/home/'+ user + '/Desktop/' )
 	
 	curChan = curGeo.currentChannel()
-	layers = list(curChan.layerList())
+	curChanName = str(curChan.name())
+	
+	layers = curChan.layerList()
 	
 	mari.history.startMacro('Patch Bake')
 	mari.app.setWaitCursor()
@@ -57,13 +61,17 @@ def patchBake():
 	curImgSet = curLayer.imageSet()
 	
 	for patch in selPatchList:
+		
 		uv = patch.uvIndex()
 		
+		curPatchIndex = str(patch.udim())
+		savePath = path + curChanName + '.' + curPatchIndex + '.tif'
+		
 		patchImg = curImgSet.image(uv, -1)
-		patchImg.saveAs(path)
+		patchImg.saveAs(savePath)
 	
-		mari.images.load(path)
-		os.remove(path)
+		mari.images.load(savePath)
+		os.remove(savePath)
 	
 	curChan.removeLayers()
 	
