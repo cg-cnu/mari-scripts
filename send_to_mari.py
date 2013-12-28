@@ -17,10 +17,21 @@ try:
 		connection.write("\x04")
 
 	connection.close()
+	else:
+	
+		import Tkinter
+		import tkMessageBox
+	
+		window = Tkinter.Tk()
+		window.wm_withdraw()
+		tkMessageBox.showerror(title = 'Mari Error',
+								message = 'Open a project in mari')
 
 except:
+	
 	import Tkinter
 	import tkMessageBox
+	
 	window = Tkinter.Tk()
 	window.wm_withdraw()
 	tkMessageBox.showerror(title = 'Mari Error',
