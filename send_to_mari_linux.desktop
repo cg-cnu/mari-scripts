@@ -5,5 +5,5 @@ MimeType=image/*;
 Actions=sendToMari;
 
 [Desktop Action sendToMari]
-Name=Send To Mari IM
+Name=Send To Mari
 Exec=python /path/to/the/script/send.py %N
