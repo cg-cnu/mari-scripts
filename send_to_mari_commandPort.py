@@ -1,6 +1,6 @@
 import mari
 
-def enableCommandPort():
+def toggleCommandPort():
 
 	mari.app.enableCommandPort( not mari.app.commandPortEnabled() )
 
@@ -9,4 +9,4 @@ def enableCommandPort():
 	else:
 		print "command port disabled"
 
-mari.menus.addAction(mari.actions.crete('Toggle Command Port', 'enableCommandPort()'), "MainWindow/Python")
+mari.menus.addAction(mari.actions.create('Toggle Command Port', 'toggleCommandPort()'), "MainWindow/Python")
