@@ -10,7 +10,7 @@
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
 #
-# a menue item in view > Screenshot All Channels will be created
+# a menue item in view > Screenshot All Channels will be created.
 #
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
