@@ -38,6 +38,18 @@ import PythonQt
 
 GUI = PythonQt.QtGui
 
+def getPath():
+	''' get the respective path '''
+	
+	if mari.app.version().isWindows():
+		user = os.popen('whoami').read().split('\\')[-1]
+		path = str("C:\\User\\" + user + "\\Documents\\Mari\\Logs\\UDIMmappings.txt")
+	else:
+		user = os.popen('whoami').read().split()[0]
+		path = str('/home/' + user + '/Mari/Logs/UDIMmappings.txt')
+		
+	return path
+
 def getUdimMap(data):
 	''' Updates the global variables sourcePatches and targetPatches
 	from the udim mapping data user provides  '''	
@@ -84,9 +96,9 @@ def copyPatches(imgSet):
 	from source patch to target patches '''
 
 	for patch in sourcePatches:
-		sourceImage = imgSet.image(patch, -1)
+		sourceImg = imgSet.image(patch, -1)
 		
-		ind = sourcePatches.index(patch)
+		index = sourcePatches.index(patch)
 		target_patches = targetPatches[index]
 
 		for each in target_patches:
@@ -168,14 +180,8 @@ def copyStacks(layers):
 
 def updateUdimMap(data):
 	''' update the udim mapping to the file in logs '''
-	
-	if mari.app.version().isWindows():
-		user = os.popen('whoami').read().split('\\')[-1]
-		path = str('c:\\User' + user + '\\Documents\\Mari\\Logs\\UDIMmappings.txt')
-	else:
-		user = os.popen('whoami').read().split()[0]
-		path = str('/home/' + user + '/Mari/Logs/UDIMmappings.txt')
 
+	path = getPath()
 	objectName = str(curGeo.name())
 	
 	try:
@@ -208,13 +214,7 @@ def updateUdimMap(data):
 def recoverUdimMap():
 	''' recovers the udim mapping if any '''
 	
-	if mari.app.version().isWindows():
-		user = os.popen('whoami').read().split('\\')[-1]
-		path = str('c:\\User' + user + '\\Documents\\Mari\\Logs\\UDIMmappings.txt')
-	else:
-		user = os.popen('whoami').read().split()[0]
-		path = str('/home/' + user + '/Mari/Logs/UDIMmappings.txt')
-	
+	path = getPath()
 	curGeo = mari.geo.current()
 	objectName = str(curGeo.name())
 
