@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Service
-ServiceType=KonqPopupMenu/Plugin
-MimeType=image/*;
-Actions=sendToMari;
-
-[Desktop Action sendToMari]
-Name=Send To Mari
-Exec=python /path/to/the/script/send.py %N

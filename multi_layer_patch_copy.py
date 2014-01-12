@@ -32,6 +32,8 @@
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
 
+## fix recover..
+
 import mari
 import os
 import PythonQt
@@ -42,8 +44,10 @@ def getPath():
 	''' get the respective path '''
 	
 	if mari.app.version().isWindows():
-		user = os.popen('whoami').read().split('\\')[-1]
-		path = str("C:\\User\\" + user + "\\Documents\\Mari\\Logs\\UDIMmappings.txt")
+		#user = os.popen('whoami').read().split('\\')[-1].rstrip("\n")
+		#path = "C:/User/" + user + "/Documents/Mari/Logs/UDIMmappings.txt"
+		pluginPath = str (mari.resources.path("MARI_USER_PATH")).replace("\\", "/")
+		path = pluginPath + "/Logs/UDIMmappings.txt"
 	else:
 		user = os.popen('whoami').read().split()[0]
 		path = str('/home/' + user + '/Mari/Logs/UDIMmappings.txt')
@@ -103,7 +107,7 @@ def copyPatches(imgSet):
 
 		for each in target_patches:
 			targetImg = imgSet.image(each, -1)
-			targetImg = copyFrom(sourceImg)
+			targetImg.copyFrom(sourceImg)
 
 	return
 
@@ -131,7 +135,7 @@ def getAllData():
 			grpLayers += [ layer for layer in layers_in_grp if layer.isGroupLayer() ]
 
 	layers = [layer for layer in allLayers if not layer.isGroupLayer() ]
-	selLayers = [layer for layer in allLayers if not layer.isSelected() ]		
+	selLayers = [layer for layer in allLayers if layer.isSelected() ]		
 
 	selGroups = [layer for layer in allLayers if layer.isGroupLayer() and layer.isSelected() ]		
 	
@@ -225,7 +229,7 @@ def recoverUdimMap():
 			oldMappings = f.readline()
 
 		for line in oldMappings:
-			if line.startswith(object):
+			if line.startswith(objectName):
 				index = oldMappings.index(line)
 				oldUDIMmap = oldMappings[index+1]
 				field.setPlainText(oldUDIMmap)
@@ -252,12 +256,14 @@ def multiLayerPatchCopy():
 
 	mari.history.startMacro("Multi Layer-Patch Copy")
 
-	if channerlCheck.isChecked():
+	if channelCheck.isChecked():
 		copyStacks(allLayers)
 	else:
 		copyStacks(selLayers)
 
 	mari.history.stopMacro()	
+	
+	layerPatchDialog.close()	
 
 	return
 

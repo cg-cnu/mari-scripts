@@ -30,14 +30,14 @@ def patchBake():
 	selPatchList = [patch for patch in patchList if patch.isSelected() ]
 	
 	if len(selPatchList) == 0:
-		mari.utils.meesage('Select atleast one patch')
+		mari.utils.meesage('Select atleast one patch', title = 'Error')
 		return
 	
-	# get the windows path working
-	
-	user = os.popen('whoami').read().split()[0]
-	path = str ('/home/'+ user + '/Desktop/' )
-	
+	if mari.app.version().isWindows():
+		path = str(mari.resources.path("MARI_USER_PATH")).replace("\\", "/")
+	else:
+		path = str( mari.resources.path("MARI_USER_PATH") )	
+
 	curChan = curGeo.currentChannel()
 	curChanName = str(curChan.name())
 	
