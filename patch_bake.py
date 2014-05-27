@@ -65,7 +65,7 @@ def patchBake():
 		uv = patch.uvIndex()
 		
 		curPatchIndex = str(patch.udim())
-		savePath = path + curChanName + '.' + curPatchIndex + '.tif'
+		savePath = curGeo.name() + "_"  + curChanName + '_' + curPatchIndex + '.tif'
 		
 		patchImg = curImgSet.image(uv, -1)
 		patchImg.saveAs(savePath)
