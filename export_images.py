@@ -1,4 +1,22 @@
+# ------------------------------------------------------------------------------
+# Export Images from image manager
+# ------------------------------------------------------------------------------
 # export selected images from the image manager
+# ** Mari >= 2.6 compatible **
+#
+# If the image has .format, it exports in the same format.
+# otherwise it exports in .tga format.
+# overwrites the file if it already exits.
+#
+# copy the script to the same location as your log folder in
+# windows: C:\Users\[user_name]\Documents\Mari\Scripts
+# linux: /home/[user_name]/Mari/Scripts
+# Mac: /home/[Username]/Mari/Scripts
+#
+# Creates a menue item in windows > Tools
+#
+# @uthor sreenivas alapati (cg-cnu)
+# ------------------------------------------------------------------------------
 
 import mari
 from PythonQt import QtGui, QtCore
@@ -34,6 +52,7 @@ class ProgressDialog(QtGui.QDialog):
 		self.cancelCpy = True
 
 def exportSelImgs():
+	''' export the selected images to the given path '''
 	if not mari.projects.current():
 		mari.utils.message("No project currently open")
 		return
