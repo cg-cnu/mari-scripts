@@ -6,9 +6,10 @@
 # select a bunch of layers and assign  
 #	prefix - sepeprator - layer name - seperator - suffix - num/abc - color
 #
-# The existing layer name will be used if 'layer name' is empty	
-#
-# Autofill terms can be edited at /logs/texTerms.txt 
+# > The existing layer name will be used if 'layer name' is empty	
+# > You can rename even the layers/adjustment layers in 
+#   he groups / adjustment stacks / mask stacks.
+# > Autofill terms can be edited at /logs/texTerms.txt 
 #
 # copy the script to the same location as your log folder in 
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
