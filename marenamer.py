@@ -1,13 +1,24 @@
-# rename multiple layers and assign colors in one go! (wip)
-
-# get the layer colors in a nice ui
-
-# known caveats and issues
-# changing the color of the group will change all the layers and groups in it
-# N & NAN means None
-
-# To change the autoFill terms or correct the wrong ones
-	# you will find it in /logs/texTerms.txt
+# ------------------------------------------------------------------------------
+# marinamer
+# ------------------------------------------------------------------------------
+# rename multiple layers and assign colors.
+#
+# select a bunch of layers and assign  
+#	prefix - sepeprator - layer name - seperator - suffix - num/abc - color
+#
+# The existing layer name will be used if 'layer name' is empty	
+#
+# Autofill terms can be edited at /logs/texTerms.txt 
+#
+# copy the script to the same location as your log folder in 
+# windows: C:\Users\[user_name]\Documents\Mari\Scripts
+# linux: /home/[user_name]/Mari/Scripts
+# Mac: /home/[Username]/Mari/Scripts
+#
+# Creates a menu item in Tools > marinamer
+#
+# @uthor sreenivas alapati (cg-cnu)
+# ------------------------------------------------------------------------------
 
 import mari
 import PySide
@@ -15,9 +26,7 @@ import string
 
 GUI = PySide.QtGui
 
-
 class Dialog(GUI.QDialog):
-	"""docstring for dialog"""
 
 	def __init__(self):
 		super(Dialog, self).__init__()
@@ -29,7 +38,7 @@ class Dialog(GUI.QDialog):
 						"light blue", "light green", "red",
 						 "white", "yellow"] 
 
-		self.setWindowTitle("marenamer")
+		self.setWindowTitle("marinamer")
 		self.setGeometry(680, 400, 800, 60)
 
 		mainLayout = GUI.QVBoxLayout()
@@ -104,8 +113,6 @@ class Dialog(GUI.QDialog):
 		self.layerNumber.setCurrentIndex(0)
 		self.layerColor.setCurrentIndex(0)
 
-	#####################################
-
 	def getLayersInGroup(self, group):
 		''' given a group returns all the layers in the group '''
 	
@@ -116,8 +123,6 @@ class Dialog(GUI.QDialog):
 
 			if layer.isGroupLayer():
 				self.getLayersInGroup(layer)
-
-		#return layersInGroup
 
 
 	def getLayersInAdjStack(self, layer):
@@ -137,8 +142,6 @@ class Dialog(GUI.QDialog):
 		except:
 			pass
 
-		# return layersInAdjStack
-
 
 	def getLayersInMaskStack(self, layer):
 		''' given a layer returns maskStack '''
@@ -156,8 +159,6 @@ class Dialog(GUI.QDialog):
 		except:
 			pass
 
-		#return layersInMaskStack
-
 
 	def getSelLayers(self):
 		''' given a layer returns all the layers including the masks and mask stacks '''
@@ -166,7 +167,6 @@ class Dialog(GUI.QDialog):
 		curChan = curGeo.currentChannel()
 
 		self.layerList = list (curChan.layerList())
-		#selLayers = [ layer for layer in layerList if layer.isSelected() ]
 		groups = [ layer for layer in self.layerList if layer.isGroupLayer() ]
 
 		for group in groups:
@@ -180,7 +180,6 @@ class Dialog(GUI.QDialog):
 
 		self.selLayers = [layer for layer in self.layerList if layer.isSelected() ]
 
-	########################################
 
 	def appendTexTerms(self, term):
 		''' update the texTerms list '''
@@ -267,9 +266,8 @@ class Dialog(GUI.QDialog):
 
 		self.getSelLayers()
 
-		# get the final selected layers, groups, adjustment layers and masks.		
-		selectedLayers = self.selLayers #+ self.selGroups 			
-		mari.history.startMacro("marenamer")
+		selectedLayers = self.selLayers
+		mari.history.startMacro("marinamer")
 
 		for index, layer in enumerate(selectedLayers):
 
@@ -290,7 +288,6 @@ class Dialog(GUI.QDialog):
 			file = open('texTerms.txt', 'r')
 			self.texTermsList = file.readlines()
 			self.texTerms = [ term.rstrip("\n") for term in self.texTermsList ]
-			#print (self.texTerms)
 		except IOError:
 			# text terms file dosen't exist-ignore
 			pass
@@ -311,7 +308,7 @@ class Dialog(GUI.QDialog):
 
 
 	def showUi(self):
-		''' Displays the ui for multi layer patch copy ''' 
+		''' display ui ''' 
 
 		if not mari.projects.current(): 
 			mari.utils.message("No project currently open")
@@ -321,5 +318,4 @@ class Dialog(GUI.QDialog):
 
 
 MAIN = Dialog()
-
-mari.menus.addAction(mari.actions.create('marenamer', 'MAIN.showUi()'), "MainWindow/Tools")
+mari.menus.addAction(mari.actions.create('marinamer', 'MAIN.showUi()'), "MainWindow/Tools")

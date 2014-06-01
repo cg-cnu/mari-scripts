@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Multi Layer-Patch Copy
+# Multi Layer-Patch Copy (WIP)
 # ------------------------------------------------------------------------------
 # Define Udim mapping 
 # Specify the source patch from which paint data is copied from - to the target

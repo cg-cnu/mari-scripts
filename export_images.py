@@ -13,7 +13,7 @@
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
 #
-# Creates a menue item in windows > Tools
+# Creates a menue item in Tools > Export Images
 #
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------

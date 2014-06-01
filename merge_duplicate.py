@@ -12,7 +12,7 @@
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
 #
-# Creates a menue item in Layers > Merge Duplicate 
+# Creates a menu item in Layers > Merge Duplicate 
 # The default shortcut has been kept to ctrl+shift+E
 # Which can be changed from Edit > shortcuts
 #
