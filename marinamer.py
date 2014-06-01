@@ -8,7 +8,7 @@
 #
 # > The existing layer name will be used if 'layer name' is empty	
 # > You can rename even the layers/adjustment layers in 
-#   he groups / adjustment stacks / mask stacks.
+#   the groups / adjustment stacks / mask stacks.
 # > Autofill terms can be edited at /logs/texTerms.txt 
 #
 # copy the script to the same location as your log folder in 
