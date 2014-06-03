@@ -6,7 +6,7 @@ A Bunch of tools for mari written in python and Qt.
 ###Screenshot all channels:###
 
 Rushing for dailies?
-Take snapshot of all the channels for the current object in one go!
+Take screenshot of all the channels for the current object in one go!
 
 ###Merge Duplicate:###
 
