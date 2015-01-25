@@ -17,6 +17,8 @@
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
 
+
+
 import mari
 
 def getLayersInGroup(group):
@@ -135,19 +137,64 @@ def toggleUnselLock():
         mari.history.stopMacro()
     
     return
-    
-toggleSelVisibilityAction = mari.actions.create('Toggle Selected Visibility', 'toggleSelVisibility()')
-mari.menus.addAction(toggleSelVisibilityAction, 'MainWindow/Layers')
-toggleSelVisibilityAction.setShortcut('Ctrl+Shift+V')
 
-toggleUnselVisibilityAction = mari.actions.create('Toggle Unselected Visibility', 'toggleUnselVisibility()')
-mari.menus.addAction(toggleUnselVisibilityAction, 'MainWindow/Layers')
-toggleSelVisibilityAction.setShortcut('Alt+Shift+V')
+# ----------------------UI INTEGRATION-------------------------------#
 
-toggleSelLockAction = mari.actions.create('Toggle Selected Lock', 'toggleSelLock()')
-mari.menus.addAction(toggleSelLockAction, 'MainWindow/Layers')
-toggleSelLockAction.setShortcut('Ctrl+Shift+L')
+###  Toggle Layer Visbility ###
 
-toggleUnselLockAction = mari.actions.create('Toggle Unselected Lock', 'toggleUnselLock()')
-mari.menus.addAction(toggleUnselLockAction, 'MainWindow/Layers')
-toggleSelLockAction.setShortcut('Alt+Shift+L')
+UI_path = 'MainWindow/&Layers/' + u'Visibility + Lock'
+script_menu_path = 'MainWindow/Scripts/Layers/' + u'Visibility + Lock'
+
+
+toggleSelVisibilityItem = mari.actions.create('Toggle Selected Visibility', 'toggleSelVisibility()')
+mari.menus.addAction(toggleSelVisibilityItem, UI_path, 'Remove Layers')
+mari.menus.addAction(toggleSelVisibilityItem, script_menu_path)
+
+icon_filename = 'ToggleVisibility.png'
+icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
+toggleSelVisibilityItem.setIconPath(icon_path)
+toggleSelVisibilityItem.setShortcut('Ctrl+Shift+V')
+
+toggleUnselVisibilityItem = mari.actions.create('Toggle Unselected Visibility', 'toggleUnselVisibility()')
+mari.menus.addAction(toggleUnselVisibilityItem, UI_path)
+mari.menus.addAction(toggleUnselVisibilityItem, script_menu_path)
+
+icon_filename = 'ToggleVisibility.png'
+icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
+toggleUnselVisibilityItem.setIconPath(icon_path)
+toggleUnselVisibilityItem.setShortcut('Alt+Shift+V')
+
+
+# --------------------------------------------------------------------
+
+###  Toggle Layer Lock ###
+
+UI_path = 'MainWindow/&Layers/' + u'Visibility + Lock'
+script_menu_path = 'MainWindow/Scripts/Layers/Visibility + Lock'
+
+toggleSelLockItem = mari.actions.create('Toggle Selected Lock', 'toggleSelLock()')
+mari.menus.addAction(toggleSelLockItem, UI_path)
+mari.menus.addAction(toggleSelLockItem, script_menu_path)
+
+icon_filename = 'Lock.png'
+icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
+toggleSelLockItem.setIconPath(icon_path)
+toggleSelLockItem.setShortcut('Ctrl+Shift+L')
+
+toggleUnselLockItem = mari.actions.create('Toggle Unselected Lock', 'toggleUnselLock()')
+mari.menus.addAction(toggleUnselLockItem, UI_path)
+mari.menus.addAction(toggleUnselLockItem, script_menu_path)
+
+icon_filename = 'Lock.png'
+icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
+toggleUnselLockItem.setIconPath(icon_path)
+toggleUnselLockItem.setShortcut('Alt+Shift+L')
+
+# --------------------------------------------------------------------
+
+###  Lock/Visibility Separator Main Interface ###
+
+mari.menus.addSeparator(UI_path,'Toggle Selected Lock')
+mari.menus.addSeparator('MainWindow/&Layers/','Remove Layers')
+
+

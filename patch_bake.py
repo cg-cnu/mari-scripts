@@ -76,6 +76,28 @@ def patchBake():
 	curChan.removeLayers()
 	
 	mari.history.stopMacro()
-	mari.app.restoreCursor()
+	mari.app.restoreCursor()\
 
-mari.menus.addAction(mari.actions.create('Patch Bake', 'patchBake()'), "MainWindow/Patches")
+
+
+###   Patch Bake to Image Manager UI Integration
+
+UI_path = 'MainWindow/&Patches'
+script_menu_path = 'MainWindow/Scripts/Patches'
+
+PatchToImageMgr= mari.actions.create('Patch to Image Manager', 'patchBake()')
+mari.menus.addAction(PatchToImageMgr, UI_path,'UV Mask to Image Manager')
+mari.menus.addAction(PatchToImageMgr, script_menu_path)
+
+icon_filename = 'SaveToImageManager.png'
+icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
+PatchToImageMgr.setIconPath(icon_path)
+PatchToImageMgr.setShortcut('')
+
+
+# --------------------------------------------------------------------
+
+
+###  Menu Separator ###
+
+mari.menus.addSeparator(UI_path,'UV Mask to Image Manager')

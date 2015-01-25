@@ -93,7 +93,7 @@ def exportSelImgs():
 			if format in formats:
 				image.saveAs( path + imageName )
 			else:
-				format = ".tga"
+				format = ".tif"
 				image.saveAs( path + imageName + format)
 		except:
 			pass
@@ -101,4 +101,22 @@ def exportSelImgs():
 		progStep += 1
 		progressDiag.pbar.setValue(progStep)
 
-mari.menus.addAction(mari.actions.create('Export Images', 'exportSelImgs()'), 'MainWindow/Tools')
+
+
+#  UI Integration
+
+UI_path = 'MriImageManager/ItemContext'
+script_menu_path = 'MainWindow/Scripts/Image Manager'
+
+exportUVMask = mari.actions.create ('Export Selection', 'exportSelImgs()')
+mari.menus.addAction(exportUVMask, UI_path)
+mari.menus.addAction(exportUVMask, script_menu_path)
+
+icon_filename = 'ExtractImage.png'
+icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
+exportUVMask.setIconPath(icon_path)
+exportUVMask.setShortcut('')
+
+###  Menu Separators ###
+
+mari.menus.addSeparator(UI_path,'Export Selection')
