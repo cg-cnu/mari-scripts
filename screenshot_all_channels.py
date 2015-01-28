@@ -46,5 +46,16 @@ def screenshotAllChannels():
 
     return
 
-mari.menus.addAction(mari.actions.create('Screenshot All Channels', 
-						'screenshotAllChannels()'), "MainWindow/View")
+# Screenshot all Channels UI Integration
+
+UI_path = 'MainWindow/View'
+script_menu_path = 'MainWindow/Scripts/View'
+
+screenshotChannels = mari.actions.create('Screenshot All Channels','screenshotAllChannels()')
+mari.menus.addAction(screenshotChannels, UI_path, 'Screenshot Settings')
+mari.menus.addAction(screenshotChannels, script_menu_path)
+
+icon_filename = 'CanvasSnapshot.png'
+icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
+screenshotChannels.setIconPath(icon_path)
+screenshotChannels.setShortcut('')

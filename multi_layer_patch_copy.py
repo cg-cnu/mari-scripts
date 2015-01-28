@@ -298,12 +298,11 @@ vLayout.addWidget(copyButton)
 ### show the ui
 def showLayerPatchUi():
 	'''display the ui'''
-
-    if mari.projects.current() is None:
-    	mari.utils.message('no project currently open')
+	if mari.projects.current() is None:
+		mari.utils.message('no project currently open')
 		return
-	
+
 	layerPatchDialog.show()
 	return
-	
+
 mari.menus.addAction(mari.actions.create('Multi Layer-Patch copy', 'showLayerPatchUi()'), 'MainWindow/Patches')
