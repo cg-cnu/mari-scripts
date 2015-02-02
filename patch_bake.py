@@ -24,7 +24,7 @@ def patchBake():
 	if not mari.projects.current():
 		mari.utils.message('No project currently open', title = 'Error')
 		return
-	
+
 	curGeo = mari.geo.current()
 	patchList = list (curGeo.patchList() )
 	selPatchList = [patch for patch in patchList if patch.isSelected() ]
@@ -43,7 +43,7 @@ def patchBake():
 	
 	layers = curChan.layerList()
 	
-	mari.history.startMacro('Patch Bake')
+	mari.history.startMacro('Patch Bake to Image Manager')
 	mari.app.setWaitCursor()
 	
 	for layer in layers:
@@ -56,27 +56,34 @@ def patchBake():
 	pasteAction.trigger()
 	
 	curChan.mergeLayers()
-	
+
 	curLayer = curChan.currentLayer()
 	curImgSet = curLayer.imageSet()
-	
+
 	for patch in selPatchList:
+		try: 
 		
-		uv = patch.uvIndex()
+			uv = patch.uvIndex()
+			
+			curPatchIndex = str(patch.udim())
+			savePath = path + curChanName + '.' + curPatchIndex + '.tif'
+			
+			patchImg = curImgSet.image(uv, -1)
+			patchImg.saveAs(savePath)
 		
-		curPatchIndex = str(patch.udim())
-		savePath = curGeo.name() + "_"  + curChanName + '_' + curPatchIndex + '.tif'
-		
-		patchImg = curImgSet.image(uv, -1)
-		patchImg.saveAs(savePath)
+			mari.images.load(savePath)
+			os.remove(savePath)
+
+		except Exception:
+			
+			pass
 	
-		mari.images.load(savePath)
-		os.remove(savePath)
 	
+	curLayer.setName('BakeToImageManager')
 	curChan.removeLayers()
 	
 	mari.history.stopMacro()
-	mari.app.restoreCursor()\
+	mari.app.restoreCursor()
 
 
 
