@@ -19,6 +19,7 @@
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
 
+
 from PySide import QtGui
 import mari
 
@@ -44,6 +45,75 @@ def _isProjectSuitable():
 
 
 
+
+# ------------------------------------------------------------------------------    
+# The following are used to find selections no matter where in the Mari Interface:
+# returnTru(),getLayerList(),findLayerSelection()
+# 
+# This is to support a) Layered Shader Stacks b) deeply nested stacks (maskstack,adjustment stacks),
+# as well as cases where users are working in pinned or docked channels without it being the current channel
+
+# ------------------------------------------------------------------------------
+
+def returnTrue(layer):
+    """Returns True for any object passed to it."""
+    return True
+    
+# ------------------------------------------------------------------------------
+def getLayerList(layer_list, criterionFn):
+    """Returns a list of all of the layers in the stack that match the given criterion function, including substacks."""
+    matching = []
+    for layer in layer_list:
+        if criterionFn(layer):
+            matching.append(layer)
+        if hasattr(layer, 'layerStack'):
+            matching.extend(getLayerList(layer.layerStack().layerList(), criterionFn))
+        if layer.hasMaskStack():
+            matching.extend(getLayerList(layer.maskStack().layerList(), criterionFn))
+        if hasattr(layer, 'hasAdjustmentStack') and layer.hasAdjustmentStack():
+            matching.extend(getLayerList(layer.adjustmentStack().layerList(), criterionFn))
+        
+    return matching
+# ------------------------------------------------------------------------------
+
+def findLayerSelection():
+    """Searches for the current selection if mari.current.layer is not the same as layer.isSelected"""
+    
+    curGeo = mari.geo.current()
+    curChannel = curGeo.currentChannel()
+    channels = curGeo.channelList()
+    curLayer = mari.current.layer()
+    layers = ()
+    layerList = ()
+    layerSelect = False
+     
+    if curLayer.isSelected():
+
+        layerSelect = True
+
+    else:
+    
+        for channel in channels:
+            
+            layerList = channel.layerList()
+            layers = getLayerList(layerList,returnTrue)
+        
+            for layer in layers:
+    
+                if layer.isSelected():
+                    curLayer = layer
+                    curChannel = channel
+                    layerSelect = True
+
+    
+    if not layerSelect:
+        mari.utils.message('No Layer Selection found. \n \n Please select at least one Layer.')
+
+
+    return curGeo,curLayer,curChannel
+
+# ------------------------------------------------------------------------------
+
 def clone_merge_layers(mode):
     ''' Creates a merge duplicate of selected layers - patch modes ALL or SELECTED'''
     
@@ -51,11 +121,14 @@ def clone_merge_layers(mode):
     if not suitable[0]:
           return
 
-    curGeo = mari.geo.current()
-    curChan = curGeo.currentChannel()
-    curActiveLayerName = str(curChan.currentLayer().name())
+    geoInfo = findLayerSelection()
+    # Geo Data = 0 current geo, 1 current channel , 2 current layer
+    curGeo = geoInfo[0]
+    curLayer = geoInfo[1]
+    curActiveLayerName = str(curLayer.name())
+    patches = list(curGeo.patchList() )
+
     
-    patches = list(curGeo.patchList())
     unSelPatches = [ patch for patch in patches if not patch.isSelected() ]
     
     mari.app.setWaitCursor()
@@ -67,9 +140,13 @@ def clone_merge_layers(mode):
     pasteAction = mari.actions.find('/Mari/Layers/Paste')
     pasteAction.trigger()
     
-    curChan.mergeLayers()
-    
-    curLayer = curChan.currentLayer()
+    mergeAction = mari.actions.find('/Mari/Layers/Merge Layers')
+    mergeAction.trigger()
+
+    # rerunning layer search
+    geoInfo = findLayerSelection()
+  
+    curLayer = geoInfo[1]
 
     if mode == 'selected':
         if len(patches) != len(unSelPatches):
@@ -124,8 +201,10 @@ class CloneMergeGUI(QtGui.QDialog):
         self.close()
 
     def runCreateAll(self):
-    	clone_merge_layers('none')
-    	self.close()
+        clone_merge_layers('none')
+        self.close()
+
+
 
 
 
@@ -142,3 +221,4 @@ icon_filename = 'AddChannel.png'
 icon_path = mari.resources.path(mari.resources.ICONS) + '/' + icon_filename
 MergeDuplicate.setIconPath(icon_path)
 MergeDuplicate.setShortcut('Ctrl+Shift+E')
+

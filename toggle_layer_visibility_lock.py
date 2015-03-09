@@ -19,7 +19,82 @@
 
 
 
+
 import mari
+
+# ------------------------------------------------------------------------------    
+# The following are used to find selections no matter where in the Mari Interface:
+# returnTru(),_getLayerList(),_findLayerSelection()
+# 
+# This is to support a) Layered Shader Stacks b) deeply nested stacks (maskstack,adjustment stacks),
+# as well as cases where users are working in pinned or docked channels without it being the current channel
+
+# ------------------------------------------------------------------------------
+
+def _returnTrue(layer):
+    """Returns True for any object passed to it."""
+    return True
+    
+# ------------------------------------------------------------------------------
+def _getLayerList(layer_list, criterionFn):
+    """Returns a list of all of the layers in the stack that match the given criterion function, including substacks."""
+    matching = []
+    for layer in layer_list:
+        if criterionFn(layer):
+            matching.append(layer)
+        if hasattr(layer, 'layerStack'):
+            matching.extend(_getLayerList(layer.layerStack().layerList(), criterionFn))
+        if layer.hasMaskStack():
+            matching.extend(_getLayerList(layer.maskStack().layerList(), criterionFn))
+        if hasattr(layer, 'hasAdjustmentStack') and layer.hasAdjustmentStack():
+            matching.extend(_getLayerList(layer.adjustmentStack().layerList(), criterionFn))
+        
+    return matching
+# ------------------------------------------------------------------------------
+
+def _findLayerSelection():
+    """Searches for the current selection if mari.current.layer is not the same as layer.isSelected"""
+    
+    curGeo = mari.geo.current()
+    curChannel = curGeo.currentChannel()
+    channels = curGeo.channelList()
+    curLayer = mari.current.layer()
+    layers = ()
+    layerList = ()
+    chn_layerList = ()
+    layerSelect = False
+     
+    if curLayer.isSelected():
+
+        layerSelect = True 
+        # Stepping through all substacks of current channel so it works in maskstacks etc.
+        layerList = curChannel.layerList()
+        layers = _getLayerList(layerList,_returnTrue)
+        chn_layerList = layers
+
+    else:
+    
+        for channel in channels:
+            
+            layerList = channel.layerList()
+            layers = _getLayerList(layerList,_returnTrue)
+        
+            for layer in layers:
+    
+                if layer.isSelected():
+                    chn_layerList = layers
+                    curChannel = channel
+                    layerSelect = True
+
+    
+    if not layerSelect:
+        mari.utils.message('No Layer Selection found. \n \n Please select at least one Layer.')
+
+
+    return curChannel,chn_layerList
+
+# ------------------------------------------------------------------------------
+
 
 def getLayersInGroup(group):
     ''' given a group will return all the layers in the group '''
@@ -40,10 +115,8 @@ def layerData():
         mari.utils.message('No project currently open')
         return -1
     
-    curGeo = mari.geo.current()
-    curChan = curGeo.currentChannel()
-
-    layerList = list (curChan.layerList())    
+    geo_data_list = _findLayerSelection()
+    layerList = list (geo_data_list[1])    
     
     layers = [ layer for layer in layerList if not layer.isGroupLayer() ]
     selLayers = [ layer for layer in layers if layer.isSelected() ]
@@ -137,6 +210,9 @@ def toggleUnselLock():
         mari.history.stopMacro()
     
     return
+    
+
+
 
 # ----------------------UI INTEGRATION-------------------------------#
 
