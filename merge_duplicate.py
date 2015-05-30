@@ -1,24 +1,23 @@
 # ------------------------------------------------------------------------------
 # Merge Duplicate
 # ------------------------------------------------------------------------------
-# creates a merge duplicate of selected layers.	
+# creates a merge duplicate of selected layers.
 # Same as Command+Shift+E / Ctrl+Shift+E in photoshop
 # Will merge for selected patches other wise will merge all.
 # Will rename the merged layer to the current active layer name + _mrgDup
 # ** rename will work for mari 2.5 and after **
 #
-# copy the script to the same location as your log folder in 
+# copy the script to the same location as your log folder in
 # windows: C:\Users\[user_name]\Documents\Mari\Scripts
 # linux: /home/[user_name]/Mari/Scripts
 # Mac: /home/[Username]/Mari/Scripts
 #
-# Creates a menu item in Layers > Merge Duplicate 
+# Creates a menu item in Layers > Merge Duplicate
 # The default shortcut has been kept to ctrl+shift+E
 # Which can be changed from Edit > shortcuts
 #
 # @uthor sreenivas alapati (cg-cnu)
 # ------------------------------------------------------------------------------
-
 
 from PySide import QtGui
 import mari
@@ -29,7 +28,7 @@ def _isProjectSuitable():
     """Checks project state."""
     MARI_2_0V1_VERSION_NUMBER = 20001300    # see below
     if mari.app.version().number() >= MARI_2_0V1_VERSION_NUMBER:
-    
+
         if mari.projects.current() is None:
             mari.utils.message("Please open a project before running.")
             return False, False
@@ -38,18 +37,15 @@ def _isProjectSuitable():
             return True, True
 
         return True, False
-        
+
     else:
         mari.utils.message("You can only run this script in Mari 2.6v3 or newer.")
         return False, False
 
-
-
-
-# ------------------------------------------------------------------------------    
+# ------------------------------------------------------------------------------
 # The following are used to find selections no matter where in the Mari Interface:
 # returnTru(),getLayerList(),findLayerSelection()
-# 
+#
 # This is to support a) Layered Shader Stacks b) deeply nested stacks (maskstack,adjustment stacks),
 # as well as cases where users are working in pinned or docked channels without it being the current channel
 
@@ -58,7 +54,7 @@ def _isProjectSuitable():
 def returnTrue(layer):
     """Returns True for any object passed to it."""
     return True
-    
+
 # ------------------------------------------------------------------------------
 def getLayerList(layer_list, criterionFn):
     """Returns a list of all of the layers in the stack that match the given criterion function, including substacks."""
@@ -72,96 +68,143 @@ def getLayerList(layer_list, criterionFn):
             matching.extend(getLayerList(layer.maskStack().layerList(), criterionFn))
         if hasattr(layer, 'hasAdjustmentStack') and layer.hasAdjustmentStack():
             matching.extend(getLayerList(layer.adjustmentStack().layerList(), criterionFn))
-        
+        if layer.isGroupLayer():
+            matching.extend(getLayerList(layer.layerStack().layerList(), criterionFn))
+        if layer.isChannelLayer():
+            matching.extend(getLayerList(layer.channel().layerList(), criterionFn))
+
     return matching
 # ------------------------------------------------------------------------------
 
 def findLayerSelection():
     """Searches for the current selection if mari.current.layer is not the same as layer.isSelected"""
-    
+
     curGeo = mari.geo.current()
     curChannel = curGeo.currentChannel()
     channels = curGeo.channelList()
     curLayer = mari.current.layer()
-    layers = ()
-    layerList = ()
-    layerSelect = False
-     
-    if curLayer.isSelected():
 
+    layers = ()
+    layerSelList = []
+    chn_layerList = ()
+
+    layerSelect = False
+
+    if curLayer.isSelected():
+    # If current layer is indeed selected one just trawl through current channel to find others
         layerSelect = True
+        chn_layerList = curChannel.layerList()
+        layers = getLayerList(chn_layerList,returnTrue)
+
+        for layer in layers:
+            if layer.isSelected():
+                layerSelList.append(layer)
 
     else:
-    
+    # If current layer is not selected it means that a selection sits somewhere else (non-current channel)
+    # so we are going trawling through the entire channel list including substacks to find it
+
         for channel in channels:
-            
-            layerList = channel.layerList()
-            layers = getLayerList(layerList,returnTrue)
-        
+
+            chn_layerList = channel.layerList()
+            layers = getLayerList(chn_layerList,returnTrue)
+
             for layer in layers:
-    
+
                 if layer.isSelected():
                     curLayer = layer
                     curChannel = channel
                     layerSelect = True
+                    layerSelList.append(layer)
 
-    
+
     if not layerSelect:
         mari.utils.message('No Layer Selection found. \n \n Please select at least one Layer.')
 
 
-    return curGeo,curLayer,curChannel
+    return curGeo,curLayer,curChannel,layerSelList
 
 # ------------------------------------------------------------------------------
 
 def clone_merge_layers(mode):
     ''' Creates a merge duplicate of selected layers - patch modes ALL or SELECTED'''
-    
+
     suitable = _isProjectSuitable()
     if not suitable[0]:
           return
 
-    geoInfo = findLayerSelection()
-    # Geo Data = 0 current geo, 1 current channel , 2 current layer
-    curGeo = geoInfo[0]
-    curLayer = geoInfo[1]
-    curActiveLayerName = str(curLayer.name())
-    patches = list(curGeo.patchList() )
+    deactivateViewportToggle = mari.actions.find('/Mari/Canvas/Toggle Shader Compiling')
+    deactivateViewportToggle.trigger()
 
-    
+    geo_data = findLayerSelection()
+    # Geo Data = 0 current geo, 1 current channel , 2 current layer, 3 current selection list
+    curGeo = geo_data[0]
+    curChan = geo_data[2]
+    curLayer = geo_data[1]
+    curSel = geo_data[3]
+    curActiveLayerName = str(curLayer.name())
+
+    patches = list(curGeo.patchList())
     unSelPatches = [ patch for patch in patches if not patch.isSelected() ]
-    
+
     mari.app.setWaitCursor()
     mari.history.startMacro('Clone & Merge Layers')
 
+
     copyAction = mari.actions.find('/Mari/Layers/Copy')
     copyAction.trigger()
-    
+
     pasteAction = mari.actions.find('/Mari/Layers/Paste')
     pasteAction.trigger()
-    
+
+    #running search for selection again in order to get a list of all duplicated layers
+    geo_data = findLayerSelection()
+    # Geo Data = 0 current geo, 1 current channel , 2 current layer, 3 current selection list
+    curGeo = geo_data[0]
+    curChan = geo_data[2]
+    curLayer = geo_data[1]
+    curSel = geo_data[3]
+    channelLayerLst = []
+    #running search from all current selected layers to get a full list of all associated layers such as masks etc.
+    nested_layers = getLayerList(curSel,returnTrue)
+    # lookin through all layers that are associated with duplicates if there are any channel layers where we duplicated channels
+    for layer in nested_layers:
+        if layer.isChannelLayer():
+            channelLayerLst.append(layer.channel())
+
+
     mergeAction = mari.actions.find('/Mari/Layers/Merge Layers')
     mergeAction.trigger()
 
     # rerunning layer search
-    geoInfo = findLayerSelection()
-  
-    curLayer = geoInfo[1]
+    geo_data = findLayerSelection()
+
+    curLayer = geo_data[1]
 
     if mode == 'selected':
         if len(patches) != len(unSelPatches):
-        
+
             imgSet = curLayer.imageSet()
-        
+
             for patch in unSelPatches:
                 uv = patch.uvIndex()
                 patchImg = imgSet.image(uv, -1)
                 patchImg.fill(mari.Color(1,0,0,0))
-    
-        
+
+
     curLayer.setName(curActiveLayerName + '_mrgDup')
+
+    # removing any channels we duplicated in the process of copy/paste
+    for channel in channelLayerLst:
+        try:
+            curGeo.removeChannel(channel)
+        except Exception:
+            continue
+
     mari.history.stopMacro()
     mari.app.restoreCursor()
+
+    deactivateViewportToggle.trigger()
 
     return
 
@@ -187,7 +230,7 @@ class CloneMergeGUI(QtGui.QDialog):
             self.Descr =  QtGui.QLabel("Clone and merge selected layers for:")
             self.AllBtn = QtGui.QPushButton('All Patches')
             self.SelectedBtn = QtGui.QPushButton('Selected Patches')
-            # Populate 
+            # Populate
             layoutV1.addWidget(self.Descr)
             layoutV1.addLayout(layoutH1)
             layoutH1.addWidget(self.AllBtn)
